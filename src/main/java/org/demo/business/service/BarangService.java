@@ -5,8 +5,10 @@
 package org.demo.business.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.demo.bean.Barang;
+import org.demo.web.common.AdvanceSearch;
 
 /**
  * Business Service Interface for entity Barang.
@@ -25,6 +27,8 @@ public interface BarangService {
 	 * @return all entities
 	 */
 	List<Barang> findAll();
+
+	Map<String,Object> findAll(AdvanceSearch param);
 
 	/**
 	 * Saves the given entity in the database (create or update)

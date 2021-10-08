@@ -5,7 +5,9 @@
 package org.demo.business.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -14,6 +16,10 @@ import org.demo.bean.jpa.BarangEntity;
 import org.demo.business.service.BarangService;
 import org.demo.business.service.mapping.BarangServiceMapper;
 import org.demo.data.repository.jpa.BarangJpaRepository;
+import org.demo.web.common.AdvanceSearch;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +50,27 @@ public class BarangServiceImpl implements BarangService {
 			beans.add(barangServiceMapper.mapBarangEntityToBarang(barangEntity));
 		}
 		return beans;
+	}
+
+	@Override
+	public Map<String,Object> findAll(AdvanceSearch params) {
+		if(params.getSort()==null){
+			params.setOrder("DESC");
+			params.setSort("kodeBarang");
+		}
+
+		if(params.getSearch()==null){
+			params.setSearch("");
+		}
+		int page = params.getOffset() / params.getLimit();
+		PageRequest sortedByPriceDesc = new PageRequest(page,params.getLimit(), Sort.Direction.fromString(params.getOrder()), params.getSort());
+		Page<BarangEntity> all = barangJpaRepository.getPagging(params.getSearch(),sortedByPriceDesc);
+
+		Map<String,Object> map =new HashMap();
+		map.put("total",all.getTotalElements());
+		map.put("rows", all.getContent());
+
+		return map;
 	}
 
 	@Override

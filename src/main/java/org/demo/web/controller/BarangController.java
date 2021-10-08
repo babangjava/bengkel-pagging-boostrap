@@ -4,24 +4,24 @@
  */
 package org.demo.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.demo.web.common.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 //--- Common classes
-import org.demo.web.common.AbstractController;
-import org.demo.web.common.FormMode;
-import org.demo.web.common.Message;
-import org.demo.web.common.MessageType;
 
 //--- Entities
 import org.demo.bean.Barang;
@@ -98,7 +98,7 @@ public class BarangController extends AbstractController {
 	@RequestMapping()
 	public String list(Model model) {
 		log("Action 'list'");
-		List<Barang> list = barangService.findAll();
+		List<Barang> list = new ArrayList<>();
 		model.addAttribute(MAIN_LIST_NAME, list);		
 		return JSP_LIST;
 	}
@@ -219,5 +219,15 @@ public class BarangController extends AbstractController {
 		}
 		return redirectToList();
 	}
+
+	@RequestMapping(value = "/data-table",
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public Map<String,Object> list(@RequestBody AdvanceSearch params) {
+		return barangService.findAll(params);
+	}
+
 
 }
